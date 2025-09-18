@@ -56,3 +56,6 @@ Wapisender mendukung webhook penerimaan pesan. Tambahkan handler baru bila dibut
 
 ## Versi JIBAS
 versi 32.0 - 05 Februari 2025
+
+## Dukung Pengembangan
+Jika modul ini bermanfaat, dukung saya melalui Saweria: https://saweria.co/cahrur
