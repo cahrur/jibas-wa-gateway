@@ -25,6 +25,21 @@ mysql -uroot < C:\xampp\htdocs\jibas\whatsappgateway\install\create_schema.sql
   - `php whatsappgateway/script/queue_sync.php`
   - `php whatsappgateway/script/wa_dispatch.php`
 - Jalankan keduanya setiap 1 menit atau sesuai kebutuhan.
+- Untuk jalankan manual
+```
+& 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php'
+& 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php'
+```
+- Untuk jalankan di windows
+1. Buka Task Scheduler → Create Task
+2. Tab General: beri nama misal JIBAS Queue Sync, centang “Run whether user is logged on or not”.
+3. Tab Triggers: klik New…, “Begin the task” = On a schedule, lalu pada “Advanced settings” centang “Repeat task every” = 1 minute, durasi = Indefinitely. ( jika 1 menit tidak ada ketik manual)
+4. Tab Actions: klik New…, “Start a program”.
+- Program/script: C:\xampp\php\php.exe
+- Add arguments: C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php
+5. Settings: centang “Run task as soon as possible after a scheduled start is missed”.
+6. Ulangi langkah yang sama untuk membuat tugas kedua bernama JIBAS WA Dispatch dengan argumen C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php. Sesudah itu kedua skrip akan jalan otomatis setiap menit.
+
 
 ## Status Antrian
 - `status = 0`: pending (belum pernah dikirim).
