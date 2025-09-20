@@ -30,7 +30,7 @@ mysql -uroot < C:\xampp\htdocs\jibas\whatsappgateway\install\create_schema.sql
 & 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php'
 & 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php'
 ```
-- Untuk jalankan di windows
+- Untuk jalankan di windows (GUI)
 1. Buka Task Scheduler → Create Task
 2. Tab General: beri nama misal JIBAS Queue Sync, centang “Run whether user is logged on or not”.
 3. Tab Triggers: klik New…, “Begin the task” = On a schedule, lalu pada “Advanced settings” centang “Repeat task every” = 1 minute, durasi = Indefinitely. ( jika 1 menit tidak ada ketik manual)
@@ -39,6 +39,26 @@ mysql -uroot < C:\xampp\htdocs\jibas\whatsappgateway\install\create_schema.sql
 - Add arguments: C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php
 5. Settings: centang “Run task as soon as possible after a scheduled start is missed”.
 6. Ulangi langkah yang sama untuk membuat tugas kedua bernama JIBAS WA Dispatch dengan argumen C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php. Sesudah itu kedua skrip akan jalan otomatis setiap menit.
+
+- Jalankan via wrapper .cmd
+1. Buat task schedule via powershell administrator
+```
+schtasks /Create /TN "JIBAS Queue Sync" /SC MINUTE /MO 1 /TR "C:\xampp\htdocs\jibas\whatsappgateway\jobs\queue_sync.cmd" /RU SYSTEM /RL HIGHEST /F
+
+schtasks /Create /TN "JIBAS WA Dispatch" /SC MINUTE /MO 1 /TR "C:\xampp\htdocs\jibas\whatsappgateway\jobs\wa_dispatch.cmd" /RU SYSTEM /RL HIGHEST /F
+```
+2. Untuk Test
+```
+& "C:\xampp\htdocs\jibas\whatsappgateway\jobs\queue_sync.cmd"
+$LASTEXITCODE
+Get-Content "C:\xampp\htdocs\jibas\whatsappgateway\jobs\logs\queue_sync.log" -Tail 50
+```
+```
+& "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\wa_dispatch.cmd" 
+$LASTEXITCODE
+Get-Content "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\logs\wa_dispatch.log" -Tail 50
+```
+3. Jika anda pakai auto install jibas , path folder jibas ada di \YIM\JIBAS\xampp\htdocs\jibas. Yang perlu anda lakukan edit file  queue_sync.cmd dan wa_dispatch.cmd 
 
 
 ## Status Antrian

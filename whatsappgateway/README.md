@@ -1,4 +1,6 @@
-# JIBAS WhatsApp Gateway
+# Custom JIBAS - Penambahan WhatsApp Gateway
+
+Modul ada di folder whatsappgateway
 
 Modul ini menambahkan mekanisme notifikasi WhatsApp ke JIBAS tanpa mengubah kode inti. Mekanisme bekerja dengan menyalin SMS yang sudah dihasilkan ke tabel `jbssms.outboxhistory`, memindahkannya ke antrian WhatsApp (`jbswa.wa_queue`), kemudian mengirimnya melalui Wapisender API.
 
@@ -9,11 +11,12 @@ Modul ini menambahkan mekanisme notifikasi WhatsApp ke JIBAS tanpa mengubah kode
 - **jbswa.wa_sync_marker**: penanda ID `outboxhistory` terakhir yang sudah diproses.
 
 ## Instalasi
-1. Jalankan skrip SQL `install/create_schema.sql` menggunakan akun MySQL JIBAS.
+1. Jalankan skrip SQL `install/create_schema.sql` menggunakan akun MySQL JIBAS. 
 Atau bisa jalankan dengan cara
 ```
 cd C:\xampp\mysql\bin
-mysql
+mysql -uroot < C:\xampp\htdocs\jibas\whatsappgateway\install\create_schema.sql
+```
 2. Salin `include/wapi.config.php` lalu isi `WAPI_API_KEY` dan `WAPI_DEVICE_KEY` sesuai kredensial Wapisender.
 3. Pastikan ekstensi PHP `curl` aktif (bawaan XAMPP).
 
@@ -22,6 +25,41 @@ mysql
   - `php whatsappgateway/script/queue_sync.php`
   - `php whatsappgateway/script/wa_dispatch.php`
 - Jalankan keduanya setiap 1 menit atau sesuai kebutuhan.
+- Untuk jalankan manual
+```
+& 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php'
+& 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php'
+```
+- Untuk jalankan di windows (GUI)
+1. Buka Task Scheduler → Create Task
+2. Tab General: beri nama misal JIBAS Queue Sync, centang “Run whether user is logged on or not”.
+3. Tab Triggers: klik New…, “Begin the task” = On a schedule, lalu pada “Advanced settings” centang “Repeat task every” = 1 minute, durasi = Indefinitely. ( jika 1 menit tidak ada ketik manual)
+4. Tab Actions: klik New…, “Start a program”.
+- Program/script: C:\xampp\php\php.exe
+- Add arguments: C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php
+5. Settings: centang “Run task as soon as possible after a scheduled start is missed”.
+6. Ulangi langkah yang sama untuk membuat tugas kedua bernama JIBAS WA Dispatch dengan argumen C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php. Sesudah itu kedua skrip akan jalan otomatis setiap menit.
+
+- Jalankan via wrapper .cmd
+1. Buat task schedule via powershell administrator
+```
+schtasks /Create /TN "JIBAS Queue Sync" /SC MINUTE /MO 1 /TR "C:\xampp\htdocs\jibas\whatsappgateway\jobs\queue_sync.cmd" /RU SYSTEM /RL HIGHEST /F
+
+schtasks /Create /TN "JIBAS WA Dispatch" /SC MINUTE /MO 1 /TR "C:\xampp\htdocs\jibas\whatsappgateway\jobs\wa_dispatch.cmd" /RU SYSTEM /RL HIGHEST /F
+```
+2. Untuk Test
+```
+& "C:\xampp\htdocs\jibas\whatsappgateway\jobs\queue_sync.cmd"
+$LASTEXITCODE
+Get-Content "C:\xampp\htdocs\jibas\whatsappgateway\jobs\logs\queue_sync.log" -Tail 50
+```
+```
+& "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\wa_dispatch.cmd" 
+$LASTEXITCODE
+Get-Content "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\logs\wa_dispatch.log" -Tail 50
+```
+3. Jika anda pakai auto install jibas , path folder jibas ada di \YIM\JIBAS\xampp\htdocs\jibas. Yang perlu anda lakukan edit file  queue_sync.cmd dan wa_dispatch.cmd 
+
 
 ## Status Antrian
 - `status = 0`: pending (belum pernah dikirim).
@@ -38,3 +76,6 @@ Wapisender mendukung webhook penerimaan pesan. Tambahkan handler baru bila dibut
 
 ## Versi JIBAS
 versi 32.0 - 05 Februari 2025
+
+## Dukung Pengembangan
+Jika modul ini bermanfaat, dukung saya melalui Saweria: https://saweria.co/cahrur
