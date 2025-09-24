@@ -31,13 +31,13 @@ mysql -uroot < C:\xampp\htdocs\jibas\whatsappgateway\install\create_schema.sql
 & 'C:\xampp\php\php.exe' 'C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php'
 ```
 - Untuk jalankan di windows (GUI)
-1. Buka Task Scheduler → Create Task
-2. Tab General: beri nama misal JIBAS Queue Sync, centang “Run whether user is logged on or not”.
-3. Tab Triggers: klik New…, “Begin the task” = On a schedule, lalu pada “Advanced settings” centang “Repeat task every” = 1 minute, durasi = Indefinitely. ( jika 1 menit tidak ada ketik manual)
-4. Tab Actions: klik New…, “Start a program”.
+1. Buka Task Scheduler ??? Create Task
+2. Tab General: beri nama misal JIBAS Queue Sync, centang ???Run whether user is logged on or not???.
+3. Tab Triggers: klik New???, ???Begin the task??? = On a schedule, lalu pada ???Advanced settings??? centang ???Repeat task every??? = 1 minute, durasi = Indefinitely. ( jika 1 menit tidak ada ketik manual)
+4. Tab Actions: klik New???, ???Start a program???.
 - Program/script: C:\xampp\php\php.exe
 - Add arguments: C:\xampp\htdocs\jibas\whatsappgateway\script\queue_sync.php
-5. Settings: centang “Run task as soon as possible after a scheduled start is missed”.
+5. Settings: centang ???Run task as soon as possible after a scheduled start is missed???.
 6. Ulangi langkah yang sama untuk membuat tugas kedua bernama JIBAS WA Dispatch dengan argumen C:\xampp\htdocs\jibas\whatsappgateway\script\wa_dispatch.php. Sesudah itu kedua skrip akan jalan otomatis setiap menit.
 
 - Jalankan via wrapper .cmd
@@ -74,8 +74,20 @@ Get-Content "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\logs\wa_dispat
 ## Webhook (opsional)
 Wapisender mendukung webhook penerimaan pesan. Tambahkan handler baru bila dibutuhkan tanpa menyentuh kode inti JIBAS.
 
+## Fitur Baru
+1. 24 09 2025
+- Penambahan batas text pada pengumuman menjadi 10.000 karakter 
+- Perubahan batas kirim pesan massal dari yang 90 -120 an menjadi tidak terbatas
+File yang diubah = pengumuman.class.php  , pengumuman.js  , pengumuman.php
+
+2. 24 09 2025 (v1.0.0)
+- Penambahan delay random 10 - 20 detik untuk pesan Pengumuman bisa ubah di file queue_sync.php ```$delaySeconds = mt_rand(10, 20);;``` ubah sesuai keinginan
+- Limit kirim pesan 50 ( bisa ubah di file wa_dispatch.php , ubah ```WA_DISPATCH_LIMIT = ``` sesuai kebutuhan)
+
+
 ## Versi JIBAS
 versi 32.0 - 05 Februari 2025
 
 ## Dukung Pengembangan
 Jika modul ini bermanfaat, dukung saya melalui Saweria: https://saweria.co/cahrur
+

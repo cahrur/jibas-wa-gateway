@@ -15,7 +15,7 @@ try
 {
     WA_OpenDb();
 
-    $sql = "SELECT id, sms_history_id, destination, message, sender_id, attempts\n            FROM " . $WA_QUEUE_TABLE . "\n           WHERE (status = 0)\n              OR (status = 2 AND attempts < " . (int)WAPI_MAX_RETRY . " AND (next_retry_at IS NULL OR next_retry_at <= NOW()))\n           ORDER BY id ASC\n           LIMIT " . WA_DISPATCH_LIMIT;
+    $sql = "SELECT id, sms_history_id, destination, message, sender_id, attempts\n            FROM " . $WA_QUEUE_TABLE . "\n           WHERE (\n                  (status = 0 AND (next_retry_at IS NULL OR next_retry_at <= NOW()))\n               OR (status = 2 AND attempts < " . (int)WAPI_MAX_RETRY . " AND (next_retry_at IS NULL OR next_retry_at <= NOW()))\n                )\n           ORDER BY id ASC\n           LIMIT " . WA_DISPATCH_LIMIT;
 
     $result = WA_Query($sql);
     $rows = WA_FetchAll($result);

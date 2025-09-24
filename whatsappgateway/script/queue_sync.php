@@ -23,7 +23,7 @@ try
         $lastProcessed = 0;
     }
 
-    $sql = "SELECT ID, DestinationNumber, Text, SenderID, idsmsgeninfo, InsertIntoDB\n            FROM jbssms.outboxhistory\n           WHERE ID > " . (int)$lastProcessed . "\n           ORDER BY ID ASC\n           LIMIT " . WA_SYNC_FETCH_LIMIT;
+    $sql = "SELECT oh.ID, oh.DestinationNumber, oh.Text, oh.SenderID, oh.idsmsgeninfo, oh.InsertIntoDB, si.info AS sms_info\n            FROM jbssms.outboxhistory oh\n            LEFT JOIN jbssms.smsgeninfo si ON si.replid = oh.idsmsgeninfo\n           WHERE oh.ID > " . (int)$lastProcessed . "\n           ORDER BY oh.ID ASC\n           LIMIT " . WA_SYNC_FETCH_LIMIT;
     $result = WA_Query($sql);
 
     $rows = WA_FetchAll($result);
@@ -36,6 +36,7 @@ try
 
     WA_BeginTrans();
 
+    $lastPengumumanSchedule = 0;
     $maxId = (int)$lastProcessed;
     foreach ($rows as $row)
     {
@@ -64,7 +65,23 @@ try
         $escMessage = WA_Escape($message);
         $escSender = WA_Escape($sender);
 
-        $insertSql = "INSERT INTO " . $WA_QUEUE_TABLE . " (sms_history_id, destination, message, sender_id, idsmsgeninfo, status, attempts, created_at)\n                       VALUES ($smsId, '$escDest', '$escMessage', '$escSender', " . ($idsmsgeninfo === null ? 'NULL' : $idsmsgeninfo) . ", 0, 0, NOW())\n                       ON DUPLICATE KEY UPDATE\n                           destination = VALUES(destination),\n                           message = VALUES(message),\n                           sender_id = VALUES(sender_id),\n                           idsmsgeninfo = VALUES(idsmsgeninfo),\n                           status = CASE WHEN status = 1 THEN status ELSE VALUES(status) END,\n                           updated_at = NOW()";
+        $smsInfo = isset($row['sms_info']) ? trim($row['sms_info']) : '';
+        $nextRetryValue = 'NULL';
+
+        if ($smsInfo !== '' && stripos($smsInfo, 'pengumuman') !== false)
+        {
+            $nowTimestamp = time();
+            if ($lastPengumumanSchedule < $nowTimestamp)
+                $lastPengumumanSchedule = $nowTimestamp;
+
+            $delaySeconds = mt_rand(10, 20);
+            $scheduledTimestamp = $lastPengumumanSchedule + $delaySeconds;
+            $lastPengumumanSchedule = $scheduledTimestamp;
+            $nextRetryValue = "'" . date('Y-m-d H:i:s', $scheduledTimestamp) . "'";
+        }
+
+        $insertSql = "INSERT INTO " . $WA_QUEUE_TABLE . " (sms_history_id, destination, message, sender_id, idsmsgeninfo, status, attempts, created_at, next_retry_at)\n                       VALUES ($smsId, '$escDest', '$escMessage', '$escSender', " . ($idsmsgeninfo === null ? 'NULL' : $idsmsgeninfo) . ", 0, 0, NOW(), %NEXT_RETRY%)\n                       ON DUPLICATE KEY UPDATE\n                           destination = VALUES(destination),\n                           message = VALUES(message),\n                           sender_id = VALUES(sender_id),\n                           idsmsgeninfo = VALUES(idsmsgeninfo),\n                           status = CASE WHEN status = 1 THEN status ELSE VALUES(status) END,\n                           next_retry_at = CASE WHEN status = 1 THEN next_retry_at ELSE COALESCE(next_retry_at, VALUES(next_retry_at)) END,\n                           updated_at = NOW()";
+        $insertSql = str_replace('%NEXT_RETRY%', $nextRetryValue, $insertSql);
         WA_Query($insertSql);
     }
 
