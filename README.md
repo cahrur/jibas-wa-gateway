@@ -84,6 +84,9 @@ File yang diubah = pengumuman.class.php  , pengumuman.js  , pengumuman.php
 - Penambahan delay random 10 - 20 detik untuk pesan Pengumuman bisa ubah di file queue_sync.php ```$delaySeconds = mt_rand(10, 20);;``` ubah sesuai keinginan
 - Limit kirim pesan 50 ( bisa ubah di file wa_dispatch.php , ubah ```WA_DISPATCH_LIMIT = ``` sesuai kebutuhan)
 
+3. 24 09 2025 (v1.1.0)
+- Penyesuaian  pesan pemberitahuan agar kompetible whatsapp (markdown editor)
+
 
 ## Versi JIBAS
 versi 32.0 - 05 Februari 2025

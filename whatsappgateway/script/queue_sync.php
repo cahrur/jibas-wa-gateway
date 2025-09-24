@@ -10,6 +10,17 @@ require_once(__DIR__ . '/../include/db_functions.php');
 
 const WA_SYNC_FETCH_LIMIT = 500;
 
+function NormalizeLineBreaks($message)
+{
+    return str_replace(array("\r\n", "\r"), "\n", $message);
+}
+
+function PrepareWhatsappMessage($message)
+{
+    $msg = NormalizeLineBreaks($message);
+    return str_replace("\n", "\r\n", $msg);
+}
+
 try
 {
     WA_OpenDb();
@@ -42,7 +53,7 @@ try
     {
         $smsId = (int)$row['ID'];
         $destination = trim($row['DestinationNumber']);
-        $message = isset($row['Text']) ? trim($row['Text']) : '';
+        $rawMessage = isset($row['Text']) ? $row['Text'] : '';
         $sender = isset($row['SenderID']) ? trim($row['SenderID']) : '';
         $idsmsgeninfo = isset($row['idsmsgeninfo']) ? (int)$row['idsmsgeninfo'] : null;
 
@@ -58,14 +69,16 @@ try
 
         $destination = preg_replace('/[^0-9A-Za-z@._-]/', '', $destination);
 
-        if (strlen($message) === 0)
+        if ($rawMessage === '')
             continue;
 
+        $smsInfo = isset($row['sms_info']) ? trim($row['sms_info']) : '';
+        $waMessage = PrepareWhatsappMessage($rawMessage);
+
         $escDest = WA_Escape($destination);
-        $escMessage = WA_Escape($message);
+        $escMessage = WA_Escape($waMessage);
         $escSender = WA_Escape($sender);
 
-        $smsInfo = isset($row['sms_info']) ? trim($row['sms_info']) : '';
         $nextRetryValue = 'NULL';
 
         if ($smsInfo !== '' && stripos($smsInfo, 'pengumuman') !== false)
