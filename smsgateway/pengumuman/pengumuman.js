@@ -368,7 +368,16 @@ function Send()
 	//alert(pin1+"\n"+pin2);
 	//alert ("SendMessage.php?Sender="+Sender+"&Message="+Message+"&NoPe="+nope+"&Nama="+nama+"&NoIn="+noin+"&Pin1="+pin1+"&Pin2="+pin2+"&SendTime="+SendTime);
 
-	parent.HiddenFrame.location.href = "SendMessage.php?Sender="+Sender+"&Message="+Message+"&NoPe="+nope+"&Nama="+nama+"&NoIn="+noin+"&Pin1="+pin1+"&Pin2="+pin2+"&SendTime="+SendTime;
+	var form = document.getElementById('PengumumanSendForm');
+	document.getElementById('SendFormSender').value = Sender;
+	document.getElementById('SendFormMessage').value = Message;
+	document.getElementById('SendFormNoPe').value = nope;
+	document.getElementById('SendFormNama').value = nama;
+	document.getElementById('SendFormNoIn').value = noin;
+	document.getElementById('SendFormPin1').value = pin1;
+	document.getElementById('SendFormPin2').value = pin2;
+	document.getElementById('SendFormSendTime').value = SendTime;
+	form.submit();
 }
 function ChgCmbBagPeg(v){
 	ShowWait('TablePegawai');
@@ -664,7 +673,7 @@ function PengumumanAfterSend(nope){
 		document.getElementById('DivLogs').innerHTML = msg;
 		document.getElementById('Sender').value = "";
 		document.getElementById('Message').value = "";
-		document.getElementById('CharLeft').value = "160";
+		document.getElementById('CharLeft').value = "10000";
 		
 		setTimeout(function(){
 			document.getElementById('DivLogs').innerHTML = "";

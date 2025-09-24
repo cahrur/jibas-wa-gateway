@@ -74,6 +74,13 @@ Get-Content "C:\YIM\JIBAS\xampp\htdocs\jibas\whatsappgateway\jobs\logs\wa_dispat
 ## Webhook (opsional)
 Wapisender mendukung webhook penerimaan pesan. Tambahkan handler baru bila dibutuhkan tanpa menyentuh kode inti JIBAS.
 
+## Fitur Baru
+24 09 2025
+- Penambahan batas text pada pengumuman menjadi 10.000 karakter 
+- Perubahan batas kirim pesan massal dari yang 90 -120 an menjadi tidak terbatas
+File yang diubah = pengumuman.class.php  , pengumuman.js  , pengumuman.php
+
+
 ## Versi JIBAS
 versi 32.0 - 05 Februari 2025
 

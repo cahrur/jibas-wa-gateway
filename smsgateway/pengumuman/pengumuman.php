@@ -89,6 +89,16 @@ $P = new Pengumuman();
 	$P->SendingTime();
 	?>
 </div>
+<form id="PengumumanSendForm" method="post" target="HiddenFrame" action="SendMessage.php" style="display:none">
+    <input type="hidden" name="Sender" id="SendFormSender" />
+    <input type="hidden" name="Message" id="SendFormMessage" />
+    <input type="hidden" name="NoPe" id="SendFormNoPe" />
+    <input type="hidden" name="Nama" id="SendFormNama" />
+    <input type="hidden" name="NoIn" id="SendFormNoIn" />
+    <input type="hidden" name="Pin1" id="SendFormPin1" />
+    <input type="hidden" name="Pin2" id="SendFormPin2" />
+    <input type="hidden" name="SendTime" id="SendFormSendTime" />
+</form>
 <?
 $P->OnFinish();
 ?>
@@ -97,3 +107,4 @@ $P->OnFinish();
 <script language="javascript">
 	
 </script>
+

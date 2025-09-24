@@ -36,9 +36,9 @@ class Pengumuman{
                   <tr>
                     <td class="td">
                     <strong>Pesan&nbsp;:&nbsp;</strong><br />
-                    <textarea onkeyup="MaxChar(this.value,160,'CharLeft')" name="Message" rows="9" class="AreaTxt" id="Message"  style="width:99%"></textarea>
+                    <textarea onkeyup="MaxChar(this.value,10000,'CharLeft')" name="Message" rows="9" class="AreaTxt" id="Message"  style="width:99%"></textarea>
                     <div align="right">
-                    <input type="text" name="CharLeft" id="CharLeft" value="160" readonly="readonly" style="border:none; width:30px; text-align:right" size="3" /> character left
+                    <input type="text" name="CharLeft" id="CharLeft" value="10000" readonly="readonly" style="border:none; width:30px; text-align:right" size="3" /> character left
                     </div>
                     <div id="ErrMessage" class="ErrMsg"></div>			</td>
                   </tr>
